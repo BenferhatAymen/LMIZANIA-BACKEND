@@ -10,7 +10,7 @@ import (
 func main() {
 	router := mux.NewRouter()
 
-	routes.UserRoutes(router)
+	routes.AuthRoutes(router)
 
 	http.ListenAndServe(":8080", router)
 

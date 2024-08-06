@@ -40,12 +40,12 @@ func init() {
 
 }
 
-func UserRoutes(router *mux.Router) {
+func AuthRoutes(router *mux.Router) {
 
-	coll := mongoClient.Database(os.Getenv("DB_NAME")).Collection(os.Getenv("USER_COLLECTION"))
-	userService := controllers.UserService{MongoCollection: coll}
+	coll := mongoClient.Database(os.Getenv("DB_NAME")).Collection(os.Getenv("AUTH_COLLECTION"))
+	AuthService := controllers.AuthService{MongoCollection: coll}
 
-	router.HandleFunc("/login", userService.LoginUser).Methods(http.MethodPost)
-	router.HandleFunc("/register", userService.RegisterUser).Methods(http.MethodPost)
+	router.HandleFunc("/login", AuthService.Login).Methods(http.MethodPost)
+	router.HandleFunc("/register", AuthService.Register).Methods(http.MethodPost)
 
 }

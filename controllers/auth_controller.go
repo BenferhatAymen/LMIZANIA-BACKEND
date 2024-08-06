@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserService struct {
+type AuthService struct {
 	MongoCollection *mongo.Collection
 }
 type Response struct {
@@ -19,7 +19,7 @@ type Response struct {
 	Error string      `json:"error,omitempty"`
 }
 
-func (svc *UserService) LoginUser(w http.ResponseWriter, r *http.Request) {
+func (svc *AuthService) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	res := &Response{}
@@ -33,7 +33,7 @@ func (svc *UserService) LoginUser(w http.ResponseWriter, r *http.Request) {
 		res.Error = err.Error()
 		return
 	}
-	repo := repository.UserRepo{MongoCollection: svc.MongoCollection}
+	repo := repository.AuthRepo{MongoCollection: svc.MongoCollection}
 
 	token, err := repo.UserLogin(user.Email, user.Password)
 
@@ -46,7 +46,7 @@ func (svc *UserService) LoginUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	res.Token = token
 }
-func (svc *UserService) RegisterUser(w http.ResponseWriter, r *http.Request) {
+func (svc *AuthService) Register(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Add("Content-Type", "application/json")
 	res := &Response{}
@@ -68,7 +68,7 @@ func (svc *UserService) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo := repository.UserRepo{MongoCollection: svc.MongoCollection}
+	repo := repository.AuthRepo{MongoCollection: svc.MongoCollection}
 
 	// Register the new user
 	result, token, err := repo.RegisterUser(&user)

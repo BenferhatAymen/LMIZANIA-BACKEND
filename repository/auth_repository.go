@@ -14,11 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserRepo struct {
+type AuthRepo struct {
 	MongoCollection *mongo.Collection
 }
 
-func (r *UserRepo) RegisterUser(user *models.User) (interface{}, string, error) {
+func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) {
 	passwordHelper := helpers.PasswordHelper{}
 
 	// Check if the user already exists
@@ -58,7 +58,7 @@ func (r *UserRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 
 	return result, token, nil
 }
-func (r *UserRepo) UserLogin(email, password string) (string, error) {
+func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 	var user models.User
 	passwordHelper := helpers.PasswordHelper{}
 
