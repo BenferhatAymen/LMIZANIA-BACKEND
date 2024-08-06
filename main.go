@@ -1,6 +1,8 @@
 package main
 
 import (
+	"lmizania/config"
+	"lmizania/database"
 	"lmizania/routes"
 	"net/http"
 
@@ -8,6 +10,9 @@ import (
 )
 
 func main() {
+	config.LoadENV()
+	database.Client = database.DBInstance()
+
 	router := mux.NewRouter()
 
 	routes.AuthRoutes(router)
