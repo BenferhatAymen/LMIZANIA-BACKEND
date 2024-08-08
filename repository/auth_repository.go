@@ -90,17 +90,3 @@ func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 	return token, nil
 }
 
-// func main() {
-// 	mongoTestClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb+srv://baroud:baroud123@cluster0.32co7ow.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"))
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	defer mongoTestClient.Disconnect(context.Background())
-
-// 	userRepo := UserRepo{MongoCollection: mongoTestClient.Database("test").Collection("users")}
-// 	result, err := userRepo.RegisterUser(&models.User{FirstName: "Aymen", FamilyName: "Lmizania", Email: "aymen@gmail.com", Password: "aymen2004", ID: uuid.New().String()})
-
-// 	fmt.Println(err)
-// 	fmt.Print(result)
-
-// }
