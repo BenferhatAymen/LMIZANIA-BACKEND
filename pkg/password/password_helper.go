@@ -1,4 +1,4 @@
-package helpers
+package passwordhelper
 
 import (
 	"golang.org/x/crypto/bcrypt"

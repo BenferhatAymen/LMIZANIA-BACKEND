@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func DBInstance() *mongo.Client {
+func MongoDBInstance() *mongo.Client {
 
 	log.Println("Connecting to database")
 	log.Println(config.MONGO_URI)
@@ -28,4 +28,4 @@ func DBInstance() *mongo.Client {
 	return client
 }
 
-var Client *mongo.Client
+var MongoClient *mongo.Client

@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"lmizania/models"
 	"lmizania/repository"
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -87,4 +89,28 @@ func (svc *AuthService) Register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	res.Data = result
 	res.Token = token
+}
+
+func (svc *AuthService) VerifyUser(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Add("Content-Type", "application/json")
+	res := &Response{}
+	defer json.NewEncoder(w).Encode(res)
+
+	userID := mux.Vars(r)["id"]
+	userOtp := r.URL.Query().Get("otp")
+
+	repo := repository.AuthRepo{MongoCollection: svc.MongoCollection}
+
+	err := repo.VerifyUser(userID, userOtp)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("error in verifying user ", err)
+		res.Error = err.Error()
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	res.Data = fmt.Sprintf("User with id %s has been verified", userID)
+
 }

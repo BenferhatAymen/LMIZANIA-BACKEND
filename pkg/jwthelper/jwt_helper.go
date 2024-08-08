@@ -1,4 +1,4 @@
-package helpers
+package jwthelper
 
 import (
 	"lmizania/models"

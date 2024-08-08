@@ -3,8 +3,11 @@ package repository
 import (
 	"context"
 	"errors"
-	"lmizania/helpers"
 	"lmizania/models"
+	"lmizania/pkg/jwthelper"
+	"lmizania/pkg/mail"
+
+	passwordhelper "lmizania/pkg/password"
 	"log"
 	"time"
 
@@ -19,7 +22,7 @@ type AuthRepo struct {
 }
 
 func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) {
-	passwordHelper := helpers.PasswordHelper{}
+	PasswordHelper := passwordhelper.PasswordHelper{}
 
 	// Check if the user already exists
 	var existingUser models.User
@@ -29,13 +32,14 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 	}
 
 	// Hash the user's password
-	hash, err := passwordHelper.HashPassword(user.Password)
+	hash, err := PasswordHelper.HashPassword(user.Password)
 	if err != nil {
 		log.Fatal(err)
 		return nil, "", err
 	}
 	user.Password = hash
 	user.ID = uuid.New().String()
+	user.IsVerified = false
 
 	// Insert the new user into the database
 	result, err := r.MongoCollection.InsertOne(context.Background(), user)
@@ -50,7 +54,13 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 		Email:          user.Email,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
 	}
-	jwtHelper := helpers.JWTHelper{Claims: claims}
+	verifier := mail.NewVerifier()
+	err = verifier.SendVerfication(user.ID, []string{user.Email})
+	if err != nil {
+		return nil, "", err
+	}
+	jwtHelper := jwthelper.JWTHelper{Claims: claims}
+
 	token, err := jwtHelper.GenerateJWT(claims)
 	if err != nil {
 		return nil, "", err
@@ -60,7 +70,7 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 }
 func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 	var user models.User
-	passwordHelper := helpers.PasswordHelper{}
+	PasswordHelper := passwordhelper.PasswordHelper{}
 
 	// Find user by email
 	err := r.MongoCollection.FindOne(context.Background(), bson.M{"email": email}).Decode(&user)
@@ -69,7 +79,7 @@ func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 	}
 
 	// Validate password
-	err = passwordHelper.CheckPasswordHash(password, user.Password)
+	err = PasswordHelper.CheckPasswordHash(password, user.Password)
 	if err != nil {
 		return "", err
 	}
@@ -81,7 +91,7 @@ func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 		Email:          user.Email,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
 	}
-	jwtHelper := helpers.JWTHelper{Claims: claims}
+	jwtHelper := jwthelper.JWTHelper{Claims: claims}
 	token, err := jwtHelper.GenerateJWT(claims)
 	if err != nil {
 		return "", err
@@ -90,3 +100,20 @@ func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 	return token, nil
 }
 
+func (r *AuthRepo) VerifyUser(userID, otp string) error {
+	var user models.User
+	err := r.MongoCollection.FindOne(context.Background(), bson.M{"_id": userID}).Decode(&user)
+	if err != nil {
+		return err
+	}
+	verifier := mail.NewVerifier()
+	err = verifier.Verify(userID, otp)
+	if err != nil {
+		return err
+	}
+	_, err = r.MongoCollection.UpdateOne(context.Background(), bson.M{"_id": userID}, bson.M{"$set": bson.M{"is_verified": true}})
+	if err != nil {
+		return err
+	}
+	return nil
+}

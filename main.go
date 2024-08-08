@@ -11,7 +11,8 @@ import (
 
 func main() {
 	config.LoadENV()
-	database.Client = database.DBInstance()
+	database.MongoClient = database.MongoDBInstance()
+	database.RedisClient = database.RedisDBInstance()
 
 	router := mux.NewRouter()
 
