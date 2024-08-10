@@ -7,7 +7,7 @@ import (
 	"lmizania/pkg/jwthelper"
 	"lmizania/pkg/mail"
 
-	passwordhelper "lmizania/pkg/password"
+	"lmizania/pkg/passwordhelper"
 	"log"
 	"time"
 
