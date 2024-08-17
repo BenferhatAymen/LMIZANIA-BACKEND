@@ -22,3 +22,14 @@ func (j *JWTHelper) GenerateJWT(claims models.Claims) (string, error) {
 	}
 	return tokenString, nil
 }
+
+func (j *JWTHelper) ParseToken(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(SECRET_KEY), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
+}

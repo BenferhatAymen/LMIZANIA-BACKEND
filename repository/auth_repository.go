@@ -120,7 +120,7 @@ func (r *AuthRepo) VerifyUser(userID, otp string) error {
 	return nil
 }
 
-func (r *AuthRepo) ResetPassword(email, newPassword string) ( string, error) {
+func (r *AuthRepo) ResetPassword(email, newPassword string) (string, error) {
 	PasswordHelper := passwordhelper.PasswordHelper{}
 
 	var user models.User
@@ -141,7 +141,7 @@ func (r *AuthRepo) ResetPassword(email, newPassword string) ( string, error) {
 	}
 	_, err = r.MongoCollection.UpdateOne(context.Background(), bson.M{"email": email}, update)
 	if err != nil {
-		return  "", err
+		return "", err
 	}
 
 	// Create JWT token
@@ -156,7 +156,7 @@ func (r *AuthRepo) ResetPassword(email, newPassword string) ( string, error) {
 	jwtHelper := jwthelper.JWTHelper{Claims: claims}
 	token, err := jwtHelper.GenerateJWT(claims)
 	if err != nil {
-		return  "", err
+		return "", err
 	}
 
 	return token, nil

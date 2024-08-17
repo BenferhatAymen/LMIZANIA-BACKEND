@@ -1,8 +1,10 @@
 package models
 
-import "github.com/dgrijalva/jwt-go"
+import (
+	"github.com/dgrijalva/jwt-go"
+)
 
-var JwtKey []byte
+var JwtKey = []byte("lmizaniayajdk")
 
 type Claims struct {
 	ID         string

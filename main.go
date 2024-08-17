@@ -17,6 +17,7 @@ func main() {
 	router := mux.NewRouter()
 
 	routes.AuthRoutes(router)
+	routes.TransactionRoutes(router)
 
 	http.ListenAndServe(":8080", router)
 
