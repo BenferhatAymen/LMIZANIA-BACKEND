@@ -52,6 +52,7 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 		FirstName:      user.FirstName,
 		FamilyName:     user.FamilyName,
 		Email:          user.Email,
+		ID:             user.ID,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
 	}
 	verifier := mail.NewVerifier()
@@ -89,6 +90,7 @@ func (r *AuthRepo) UserLogin(email, password string) (string, error) {
 		FirstName:      user.FirstName,
 		FamilyName:     user.FamilyName,
 		Email:          user.Email,
+		ID:             user.ID,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
 	}
 	jwtHelper := jwthelper.JWTHelper{Claims: claims}

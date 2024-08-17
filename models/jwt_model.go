@@ -5,6 +5,7 @@ import "github.com/dgrijalva/jwt-go"
 var JwtKey []byte
 
 type Claims struct {
+	ID         string
 	FirstName  string
 	FamilyName string
 	Email      string
