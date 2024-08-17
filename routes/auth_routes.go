@@ -18,5 +18,6 @@ func AuthRoutes(router *mux.Router) {
 	router.HandleFunc("/login", AuthService.Login).Methods(http.MethodPost)
 	router.HandleFunc("/register", AuthService.Register).Methods(http.MethodPost)
 	router.HandleFunc("/verify/{id}", AuthService.VerifyUser).Methods(http.MethodPost)
+	router.HandleFunc("/resetpassword", AuthService.ResetPassword).Methods(http.MethodPost)
 
 }

@@ -121,3 +121,55 @@ func (svc *AuthService) VerifyUser(w http.ResponseWriter, r *http.Request) {
 	res.Data = fmt.Sprintf("User with id %s has been verified", userID)
 
 }
+
+
+func (svc *AuthService) ResetPassword(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Add("Content-Type", "application/json")
+	res := &types.AuthResponse{}
+	defer json.NewEncoder(w).Encode(res)
+
+	var request struct {
+		Email       string `json:"email"`
+		NewPassword string `json:"new_password"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		res.StatusCode = http.StatusBadRequest
+		log.Println("Invalid body", err)
+		res.Error = "Invalid request payload"
+		return
+	}
+
+	// Ensure email and new password are provided
+	if request.Email == "" || request.NewPassword == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		res.StatusCode = http.StatusBadRequest
+		res.Error = "Email and new password are required"
+		return
+	}
+
+	repo := repository.AuthRepo{MongoCollection: svc.MongoCollection}
+
+	// Reset the user's password
+	token, err := repo.ResetPassword(request.Email, request.NewPassword)
+	if err != nil {
+		if err.Error() == "user not found" {
+			w.WriteHeader(http.StatusNotFound)
+			res.StatusCode = http.StatusNotFound
+			res.Error = "User not found"
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			res.StatusCode = http.StatusInternalServerError
+			res.Error = err.Error()
+		}
+		log.Println("Error resetting password", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	res.StatusCode = http.StatusOK
+	res.Token = token
+}

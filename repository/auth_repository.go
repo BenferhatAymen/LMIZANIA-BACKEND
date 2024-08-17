@@ -119,3 +119,45 @@ func (r *AuthRepo) VerifyUser(userID, otp string) error {
 	}
 	return nil
 }
+
+func (r *AuthRepo) ResetPassword(email, newPassword string) ( string, error) {
+	PasswordHelper := passwordhelper.PasswordHelper{}
+
+	var user models.User
+	err := r.MongoCollection.FindOne(context.Background(), bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		return "", errors.New("user not found")
+	}
+
+	hash, err := PasswordHelper.HashPassword(newPassword)
+	if err != nil {
+		log.Fatal(err)
+		return "", err
+	}
+	user.Password = hash
+
+	update := bson.M{
+		"$set": bson.M{"password": user.Password},
+	}
+	_, err = r.MongoCollection.UpdateOne(context.Background(), bson.M{"email": email}, update)
+	if err != nil {
+		return  "", err
+	}
+
+	// Create JWT token
+	claims := models.Claims{
+		FirstName:      user.FirstName,
+		FamilyName:     user.FamilyName,
+		Email:          user.Email,
+		ID:             user.ID,
+		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
+	}
+
+	jwtHelper := jwthelper.JWTHelper{Claims: claims}
+	token, err := jwtHelper.GenerateJWT(claims)
+	if err != nil {
+		return  "", err
+	}
+
+	return token, nil
+}
