@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
- 
+
 	"lmizania/models"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,7 +18,7 @@ func (r *UserRepo) FindUserByID(userID string) (*models.User, error) {
 	var user models.User
 	err := r.MongoCollection.FindOne(context.Background(), bson.M{"_id": userID}).Decode(&user)
 	if err != nil {
- 		return nil, err
+		return nil, err
 	}
 	return &user, nil
 }
@@ -153,7 +153,7 @@ func (r *UserRepo) SetTarget(userID string, target float64) error {
 	_, err = r.MongoCollection.UpdateOne(
 		context.Background(),
 		bson.M{"_id": userID},
-		bson.M{"$set": bson.M{"savings": user.Savings}},
+		bson.M{"$set": bson.M{"target": user.Target}},
 	)
 	return err
 }
@@ -166,4 +166,31 @@ func (r *UserRepo) GetTarget(userID string) (float64, error) {
 	}
 
 	return user.GetTarget(), nil
+}
+
+// GetIncome retrieves the income of a user by userID
+func (r *UserRepo) GetIncome(userID string) (float64, error) {
+	user, err := r.FindUserByID(userID)
+	if err != nil {
+		return 0, err
+	}
+	return user.GetIncome(), nil
+}
+
+// GetExpense retrieves the expenses of a user by userID
+func (r *UserRepo) GetExpense(userID string) (float64, error) {
+	user, err := r.FindUserByID(userID)
+	if err != nil {
+		return 0, err
+	}
+	return user.GetExpenses(), nil
+}
+
+// GetSavings retrieves the savings of a user by userID
+func (r *UserRepo) GetSavings(userID string) (float64, error) {
+	user, err := r.FindUserByID(userID)
+	if err != nil {
+		return 0, err
+	}
+	return user.GetSavings(), nil
 }

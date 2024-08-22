@@ -18,6 +18,7 @@ func main() {
 
 	routes.AuthRoutes(router)
 	routes.TransactionRoutes(router)
+	routes.BalanceRoutes(router)
 
 	http.ListenAndServe(":8080", router)
 
