@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"lmizania/models"
 	"lmizania/pkg/types"
 	"lmizania/repository"
@@ -15,6 +14,7 @@ import (
 
 type TransactionService struct {
 	MongoCollection *mongo.Collection
+	UserRepo        *repository.UserRepo // Added UserRepo to TransactionService
 }
 
 // Add Transaction
@@ -33,8 +33,15 @@ func (svc *TransactionService) AddTransaction(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	repo := repository.TransactionRepo{MongoCollection: svc.MongoCollection}
+	// Assign the userID from the context
 	transaction.UserID = r.Context().Value("userID").(string)
+
+	// Initialize the TransactionRepo with UserRepo
+	repo := repository.TransactionRepo{
+		MongoCollection: svc.MongoCollection,
+		UserRepo:        svc.UserRepo,
+	}
+
 	result, err := repo.AddTransaction(&transaction)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -66,7 +73,13 @@ func (svc *TransactionService) UpdateTransaction(w http.ResponseWriter, r *http.
 		return
 	}
 
-	repo := repository.TransactionRepo{MongoCollection: svc.MongoCollection}
+	// Initialize the TransactionRepo with UserRepo
+	repo := repository.TransactionRepo{
+		MongoCollection: svc.MongoCollection,
+		UserRepo:        svc.UserRepo,
+	}
+	transaction.UserID = r.Context().Value("userID").(string)
+
 	result, err := repo.UpdateTransaction(transactionID, &transaction)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -89,7 +102,12 @@ func (svc *TransactionService) DeleteTransaction(w http.ResponseWriter, r *http.
 
 	transactionID := mux.Vars(r)["id"]
 
-	repo := repository.TransactionRepo{MongoCollection: svc.MongoCollection}
+	// Initialize the TransactionRepo with UserRepo
+	repo := repository.TransactionRepo{
+		MongoCollection: svc.MongoCollection,
+		UserRepo:        svc.UserRepo,
+	}
+
 	err := repo.DeleteTransaction(transactionID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -111,9 +129,13 @@ func (svc *TransactionService) GetAllTransactions(w http.ResponseWriter, r *http
 	defer json.NewEncoder(w).Encode(res)
 
 	userID := r.Context().Value("userID").(string)
-	fmt.Println("User ID", userID)
 
-	repo := repository.TransactionRepo{MongoCollection: svc.MongoCollection}
+	// Initialize the TransactionRepo with UserRepo
+	repo := repository.TransactionRepo{
+		MongoCollection: svc.MongoCollection,
+		UserRepo:        svc.UserRepo,
+	}
+
 	transactions, err := repo.GetAllTransactions(userID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

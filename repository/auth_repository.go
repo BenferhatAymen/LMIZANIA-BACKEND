@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/google/uuid"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -37,9 +37,7 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 		log.Fatal(err)
 		return nil, "", err
 	}
-	user.Password = hash
-	user.ID = uuid.New().String()
-	user.IsVerified = false
+	user.SetInitialAttributes(hash)
 
 	// Insert the new user into the database
 	result, err := r.MongoCollection.InsertOne(context.Background(), user)
@@ -49,10 +47,11 @@ func (r *AuthRepo) RegisterUser(user *models.User) (interface{}, string, error) 
 
 	// Create JWT token
 	claims := models.Claims{
-		FirstName:      user.FirstName,
-		FamilyName:     user.FamilyName,
-		Email:          user.Email,
-		ID:             user.ID,
+		FirstName:  user.FirstName,
+		FamilyName: user.FamilyName,
+		Email:      user.Email,
+		ID:         user.ID,
+
 		StandardClaims: jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 12).Unix()},
 	}
 	verifier := mail.NewVerifier()

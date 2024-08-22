@@ -12,13 +12,12 @@ import (
 
 func AuthRoutes(router *mux.Router) {
 
-	coll := database.MongoClient.Database(config.DB_NAME).Collection("users")
-	AuthService := controllers.AuthService{MongoCollection: coll}
+	userColl := database.MongoClient.Database(config.DB_NAME).Collection("users")
+	AuthService := controllers.AuthService{MongoCollection: userColl}
 
 	router.HandleFunc("/login", AuthService.Login).Methods(http.MethodPost)
 	router.HandleFunc("/register", AuthService.Register).Methods(http.MethodPost)
 	router.HandleFunc("/verify/{id}", AuthService.VerifyUser).Methods(http.MethodPost)
 	router.HandleFunc("/resetpassword", AuthService.ResetPassword).Methods(http.MethodPost)
-	
 
 }

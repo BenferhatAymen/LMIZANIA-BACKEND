@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -27,19 +26,16 @@ func LoginRequired(f http.HandlerFunc) http.HandlerFunc {
 		}
 
 		tokenStr := args[1]
-		fmt.Println(tokenStr)
-		claims := &models.Claims{}
+ 		claims := &models.Claims{}
 		token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 			return models.JwtKey, nil
 		})
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, `{"message":"invalid token"}`, http.StatusUnauthorized)
+ 			http.Error(w, `{"message":"invalid token"}`, http.StatusUnauthorized)
 			return
 		}
 		if !token.Valid {
-			fmt.Println(err)
-
+ 
 			http.Error(w, `{"message":"token is not valid"}`, http.StatusUnauthorized)
 			return
 		}
@@ -47,8 +43,7 @@ func LoginRequired(f http.HandlerFunc) http.HandlerFunc {
 		// Extract user ID from custom claims
 		id := claims.ID
 	
-		fmt.Println(id)
-
+ 
 		// Add userID to the request context
 		ctx := context.WithValue(r.Context(), "userID", id)
 		r = r.WithContext(ctx)

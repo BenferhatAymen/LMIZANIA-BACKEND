@@ -4,20 +4,30 @@ import (
 	"lmizania/config"
 	"lmizania/controllers"
 	"lmizania/database"
-	"net/http"
-
 	"lmizania/middlewares"
+	"lmizania/repository"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
 func TransactionRoutes(router *mux.Router) {
+	// Initialize the MongoDB collections for transactions and users
+	transactionColl := database.MongoClient.Database(config.DB_NAME).Collection("transactions")
+	userColl := database.MongoClient.Database(config.DB_NAME).Collection("users")
 
-	coll := database.MongoClient.Database(config.DB_NAME).Collection("transactions")
-	TransactionService := controllers.TransactionService{MongoCollection: coll}
+	// Initialize the UserRepo with the user collection
+	userRepo := &repository.UserRepo{MongoCollection: userColl}
 
-	router.HandleFunc("/transactions", middlewares.LoginRequired(TransactionService.AddTransaction)).Methods(http.MethodPost)
-	router.HandleFunc("/transactions/{id}", middlewares.LoginRequired(TransactionService.UpdateTransaction)).Methods(http.MethodPut)
-	router.HandleFunc("/transactions/{id}", middlewares.LoginRequired(TransactionService.DeleteTransaction)).Methods(http.MethodDelete)
-	router.HandleFunc("/transactions", middlewares.LoginRequired(TransactionService.GetAllTransactions)).Methods(http.MethodGet)
+	// Initialize the TransactionService with the transaction collection and UserRepo
+	transactionService := controllers.TransactionService{
+		MongoCollection: transactionColl,
+		UserRepo:        userRepo,
+	}
+
+	// Define the transaction routes with the necessary middlewares
+	router.HandleFunc("/transactions", middlewares.LoginRequired(transactionService.AddTransaction)).Methods(http.MethodPost)
+	router.HandleFunc("/transactions/{id}", middlewares.LoginRequired(transactionService.UpdateTransaction)).Methods(http.MethodPut)
+	router.HandleFunc("/transactions/{id}", middlewares.LoginRequired(transactionService.DeleteTransaction)).Methods(http.MethodDelete)
+	router.HandleFunc("/transactions", middlewares.LoginRequired(transactionService.GetAllTransactions)).Methods(http.MethodGet)
 }
