@@ -12,13 +12,10 @@ import (
 )
 
 func BalanceRoutes(router *mux.Router) {
-	// Initialize the MongoDB collection for users
 	userColl := database.MongoClient.Database(config.DB_NAME).Collection("users")
 
-	// Initialize the UserRepo with the user collection
 	userRepo := &repository.UserRepo{MongoCollection: userColl}
 
-	// Initialize the BalanceService with UserRepo
 	balanceService := controllers.BalanceService{
 		UserRepo: userRepo,
 	}
