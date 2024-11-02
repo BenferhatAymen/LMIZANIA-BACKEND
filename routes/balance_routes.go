@@ -20,7 +20,6 @@ func BalanceRoutes(router *mux.Router) {
 		UserRepo: userRepo,
 	}
 
-	// Define the balance routes with the necessary middlewares
 	router.HandleFunc("/balance/wallet", middlewares.LoginRequired(balanceService.GetWallet)).Methods(http.MethodGet)
 	router.HandleFunc("/balance/wallet", middlewares.LoginRequired(balanceService.SetWallet)).Methods(http.MethodPut)
 	router.HandleFunc("/balance/target", middlewares.LoginRequired(balanceService.GetTarget)).Methods(http.MethodGet)
