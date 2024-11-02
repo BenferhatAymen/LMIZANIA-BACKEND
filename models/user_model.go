@@ -30,7 +30,6 @@ func (u *User) SetInitialAttributes(hashedPassword string) {
 	u.ID = uuid.New().String()
 	u.Password = hashedPassword
 }
-// IncreaseIncome increases the user's income and updates the wallet
 func (u *User) IncreaseIncome(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -40,7 +39,6 @@ func (u *User) IncreaseIncome(amount float64) error {
 	return nil
 }
 
-// DecreaseIncome decreases the user's income and updates the wallet
 func (u *User) DecreaseIncome(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -53,12 +51,10 @@ func (u *User) DecreaseIncome(amount float64) error {
 	return nil
 }
 
-// GetIncome returns the user's income
 func (u *User) GetIncome() float64 {
 	return u.Income
 }
 
-// IncreaseExpense increases the user's expenses and updates the wallet
 func (u *User) IncreaseExpense(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -68,7 +64,6 @@ func (u *User) IncreaseExpense(amount float64) error {
 	return nil
 }
 
-// DecreaseExpense decreases the user's expenses and updates the wallet
 func (u *User) DecreaseExpense(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -81,12 +76,10 @@ func (u *User) DecreaseExpense(amount float64) error {
 	return nil
 }
 
-// GetExpenses returns the user's expenses
 func (u *User) GetExpenses() float64 {
 	return u.Expenses
 }
 
-// DepositSavings increases the user's savings
 func (u *User) DepositSavings(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -95,12 +88,10 @@ func (u *User) DepositSavings(amount float64) error {
 	return nil
 }
 
-// GetSavings returns the user's savings
 func (u *User) GetSavings() float64 {
 	return u.Savings
 }
 
-// SetWallet sets the wallet value
 func (u *User) SetWallet(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -109,12 +100,10 @@ func (u *User) SetWallet(amount float64) error {
 	return nil
 }
 
-// GetWallet returns the wallet value
 func (u *User) GetWallet() float64 {
 	return u.Wallet
 }
 
-// SetTarget sets a financial target for the user
 func (u *User) SetTarget(amount float64) error {
 	if amount < 0 {
 		return errors.New("amount cannot be negative")
@@ -123,7 +112,6 @@ func (u *User) SetTarget(amount float64) error {
 	return nil
 }
 
-// GetTarget returns the user's financial target
 func (u *User) GetTarget() float64 {
 	return u.Target
 }
