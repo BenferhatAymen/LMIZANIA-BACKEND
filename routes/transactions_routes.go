@@ -12,7 +12,7 @@ import (
 )
 
 func TransactionRoutes(router *mux.Router) {
-	// Initialize the MongoDB collections for transactions and users
+	
 	transactionColl := database.MongoClient.Database(config.DB_NAME).Collection("transactions")
 	userColl := database.MongoClient.Database(config.DB_NAME).Collection("users")
 
