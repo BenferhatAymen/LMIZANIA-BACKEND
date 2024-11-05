@@ -50,26 +50,38 @@
    go run main.go
    ```
 
+
 ## API Endpoints
 
-The backend provides several RESTful API endpoints, including:
+### Authentication Endpoints
+- `POST /login` - Log in a user.
+- `POST /register` - Register a new user.
+- `POST /verify/{id}` - Verify a user account.
+- `POST /resetpassword` - Reset a user's password.
 
-- **User Endpoints**:
-  - `POST /register`: Register a new user.
-  - `POST /login`: User login with OTP verification.
-  - `GET /user/:id`: Get user profile.
+### Balance Endpoints
+- `GET /balance/wallet` - Get user's wallet balance.
+- `PUT /balance/wallet` - Set/update user's wallet balance.
+- `GET /balance/target` - Get user's financial target.
+- `PUT /balance/target` - Set/update user's financial target.
+- `POST /balance/savings` - Deposit into user's savings.
+- `GET /balance/savings` - Retrieve user's savings balance.
+- `GET /balance/income` - Get user's income information.
+- `GET /balance/expense` - Get user's expense information.
 
-- **Transaction Endpoints**:
-  - `POST /transaction`: Add a new transaction.
-  - `GET /transaction/:id`: Get transaction details.
-  - `DELETE /transaction/:id`: Delete a transaction.
-  - `PUT /transaction/:id`: Update a transaction.
+### Goals Endpoints
+- `POST /goals` - Create a new financial goal.
+- `PUT /goals/{id}` - Update a specific goal.
+- `DELETE /goals/{id}` - Delete a specific goal.
+- `GET /goals` - Retrieve all goals for the user.
+- `POST /goals/{id}/deposit` - Deposit funds towards a specific goal.
 
-- **Goal Endpoints**:
-  - `POST /goal`: Create a new financial goal.
-  - `GET /goal/:id`: Get goal details.
-  - `POST /goal/deposit`: Deposit into a goal.
-  - `DELETE /goal/:id`: Delete a goal.
+### Transactions Endpoints
+- `POST /transactions` - Add a new transaction.
+- `PUT /transactions/{id}` - Update a specific transaction.
+- `DELETE /transactions/{id}` - Delete a specific transaction.
+- `GET /transactions` - Retrieve all transactions for the user.
+
 
 ## Technologies Used
 
